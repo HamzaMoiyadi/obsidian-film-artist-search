@@ -30,7 +30,8 @@ export default class ActorSearchPlugin extends Plugin {
 		this.addCommand({
 			id: 'insert-actor-metadata',
 			name: 'Insert actor metadata',
-			editorCallback: (editor: Editor) => this.insertActorMetadata(editor),
+			editorCallback: (editor: Editor) =>
+				this.insertActorMetadata(editor),
 		});
 	}
 
@@ -127,33 +128,41 @@ export default class ActorSearchPlugin extends Plugin {
 		const activeFile = this.app.workspace.getActiveFile();
 		const initialQuery = activeFile?.basename ?? '';
 
-		const modal = new ActorSearchModal(this.app, tmdbApiKey, async (result) => {
-			let person: Awaited<ReturnType<typeof getPersonDetails>>;
+		const modal = new ActorSearchModal(
+			this.app,
+			tmdbApiKey,
+			async (result) => {
+				let person: Awaited<ReturnType<typeof getPersonDetails>>;
 
-			try {
-				person = await getPersonDetails(result.id, tmdbApiKey);
-			} catch {
-				/* eslint-disable obsidianmd/ui/sentence-case */
-				new Notice('Could not reach TMDb. Check your connection and API key.');
-				/* eslint-enable obsidianmd/ui/sentence-case */
-				return;
-			}
-
-			let content = '';
-			if (templateFile) {
-				const tplFile = this.app.vault.getAbstractFileByPath(
-					normalizePath(templateFile),
-				);
-				if (!tplFile || !(tplFile instanceof TFile)) {
-					new Notice('Template file not found. Check plugin settings.');
+				try {
+					person = await getPersonDetails(result.id, tmdbApiKey);
+				} catch {
+					/* eslint-disable obsidianmd/ui/sentence-case */
+					new Notice(
+						'Could not reach TMDb. Check your connection and API key.',
+					);
+					/* eslint-enable obsidianmd/ui/sentence-case */
 					return;
 				}
-				const raw = await this.app.vault.read(tplFile);
-				content = renderTemplate(raw, person);
-			}
 
-			editor.setValue(content);
-		});
+				let content = '';
+				if (templateFile) {
+					const tplFile = this.app.vault.getAbstractFileByPath(
+						normalizePath(templateFile),
+					);
+					if (!tplFile || !(tplFile instanceof TFile)) {
+						new Notice(
+							'Template file not found. Check plugin settings.',
+						);
+						return;
+					}
+					const raw = await this.app.vault.read(tplFile);
+					content = renderTemplate(raw, person);
+				}
+
+				editor.setValue(content);
+			},
+		);
 
 		modal.open();
 

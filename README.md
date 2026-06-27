@@ -14,6 +14,14 @@ Opens a search palette, searches TMDb as you type, and creates a structured Mark
 
 Opens the same search palette but inserts a `[[Name]]` wikilink at the cursor position in the active editor. Useful for quickly linking to a person while writing without leaving your current document.
 
+> **Note:** This command only appears in the command palette when the active note is in edit mode (not reading/preview mode).
+
+### Insert actor metadata
+
+Opens the search palette pre-populated with the active note's title. On selection, fetches full person details from TMDb, renders your configured template, and replaces the entire note content with the result.
+
+> **Note:** This command only appears in the command palette when the active note is in edit mode (not reading/preview mode).
+
 ---
 
 ## Requirements
@@ -63,6 +71,16 @@ Place your cursor where you want the link, then run **Actor Search: Insert actor
 
 1. Search and select a person the same way.
 2. `[[Name]]` is inserted at the cursor.
+
+### Insert actor metadata into the current note
+
+Open a note in edit mode, then run **Actor Search: Insert actor metadata**.
+
+1. The search box opens pre-filled with the note's title — results load immediately.
+2. Select a person to confirm.
+3. The plugin fetches their full details from TMDb and replaces the entire note content with your rendered template.
+
+> **Tip:** If the command is missing from the palette, switch the note from reading mode to edit mode first.
 
 ---
 
