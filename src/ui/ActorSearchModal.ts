@@ -39,6 +39,7 @@ export class ActorSearchModal extends SuggestModal<PersonSearchResult> {
 			const img = wrap.createEl('img', { cls: 'actor-thumb-img' });
 			img.src = `https://image.tmdb.org/t/p/w92${result.profile_path}`;
 			img.addEventListener('load', () => img.addClass('loaded'));
+			img.addEventListener('error', () => img.remove());
 		}
 
 		// Text column
