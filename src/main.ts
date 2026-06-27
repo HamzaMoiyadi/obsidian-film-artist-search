@@ -43,10 +43,16 @@ export default class ActorSearchPlugin extends Plugin {
 		}
 
 		new ActorSearchModal(this.app, tmdbApiKey, async (result) => {
+			// 1. Fetch full details
+			let person: Awaited<ReturnType<typeof getPersonDetails>>;
 			try {
-				// 1. Fetch full details
-				const person = await getPersonDetails(result.id, tmdbApiKey);
+				person = await getPersonDetails(result.id, tmdbApiKey);
+			} catch {
+				new Notice('Could not reach TMDb. Check your connection and API key.');
+				return;
+			}
 
+			try {
 				// 2. Resolve note path
 				const folder = normalizePath(notesFolder || 'People');
 				const notePath = normalizePath(`${folder}/${person.name}.md`);
@@ -79,7 +85,7 @@ export default class ActorSearchPlugin extends Plugin {
 				await this.app.workspace.getLeaf(false).openFile(file);
 
 			} catch {
-				new Notice('Could not reach TMDb. Check your connection.');
+				new Notice('Failed to create note. Check your vault permissions and settings.');
 			}
 		}).open();
 	}
