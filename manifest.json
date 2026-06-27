@@ -1,11 +1,10 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "obsidian-actor-search",
+	"name": "Actor Search",
 	"version": "1.0.0",
 	"minAppVersion": "1.0.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "Search TMDb for actors and create structured vault notes or insert wikilinks.",
+	"author": "Hamza Moiyadi",
+	"authorUrl": "",
 	"isDesktopOnly": false
 }
