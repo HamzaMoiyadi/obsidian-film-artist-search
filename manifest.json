@@ -2,7 +2,7 @@
 	"id": "obsidian-actor-search",
 	"name": "Actor Search",
 	"version": "1.0.0",
-	"minAppVersion": "1.0.0",
+	"minAppVersion": "1.4.10",
 	"description": "Search TMDb for actors and create structured vault notes or insert wikilinks.",
 	"author": "Hamza Moiyadi",
 	"isDesktopOnly": false

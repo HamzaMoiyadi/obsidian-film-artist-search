@@ -1,5 +1,9 @@
 import { Editor, Notice, Plugin, TFile, normalizePath } from 'obsidian';
-import { ActorSearchSettings, DEFAULT_SETTINGS, ActorSearchSettingTab } from './settings';
+import {
+	ActorSearchSettings,
+	DEFAULT_SETTINGS,
+	ActorSearchSettingTab,
+} from './settings';
 import { ActorSearchModal } from './ui/ActorSearchModal';
 import { getPersonDetails } from './tmdb/details';
 import { renderTemplate } from './utils/template';
@@ -27,7 +31,11 @@ export default class ActorSearchPlugin extends Plugin {
 	onunload() {}
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData() as Partial<ActorSearchSettings>);
+		this.settings = Object.assign(
+			{},
+			DEFAULT_SETTINGS,
+			(await this.loadData()) as Partial<ActorSearchSettings>,
+		);
 	}
 
 	async saveSettings() {
@@ -45,10 +53,13 @@ export default class ActorSearchPlugin extends Plugin {
 		new ActorSearchModal(this.app, tmdbApiKey, async (result) => {
 			// 1. Fetch full details
 			let person: Awaited<ReturnType<typeof getPersonDetails>>;
+
 			try {
 				person = await getPersonDetails(result.id, tmdbApiKey);
 			} catch {
-				new Notice('Could not reach TMDb. Check your connection and API key.');
+				new Notice(
+					'Could not reach TMDb. Check your connection and API key.',
+				);
 				return;
 			}
 
@@ -66,9 +77,13 @@ export default class ActorSearchPlugin extends Plugin {
 				// 4. Load and render template
 				let content = '';
 				if (templateFile) {
-					const tplFile = this.app.vault.getAbstractFileByPath(normalizePath(templateFile));
+					const tplFile = this.app.vault.getAbstractFileByPath(
+						normalizePath(templateFile),
+					);
 					if (!tplFile || !(tplFile instanceof TFile)) {
-						new Notice('Template file not found. Check plugin settings.');
+						new Notice(
+							'Template file not found. Check plugin settings.',
+						);
 						return;
 					}
 					const raw = await this.app.vault.read(tplFile);
@@ -83,9 +98,10 @@ export default class ActorSearchPlugin extends Plugin {
 				// 6. Write note and open
 				const file = await this.app.vault.create(notePath, content);
 				await this.app.workspace.getLeaf(false).openFile(file);
-
 			} catch {
-				new Notice('Failed to create note. Check your vault permissions and settings.');
+				new Notice(
+					'Failed to create note. Check your vault permissions and settings.',
+				);
 			}
 		}).open();
 	}
