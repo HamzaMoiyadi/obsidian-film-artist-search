@@ -19,5 +19,5 @@ export function renderTemplate(template: string, person: PersonDetails): string 
     industry: '',
   };
 
-  return template.replace(/\{\{(\w+)\}\}/g, (_, key) => vars[key] ?? '');
+  return template.replace(/\{\{(\w+)\}\}/g, (_, key: string) => vars[key] ?? '');
 }

@@ -46,6 +46,7 @@ export default class ActorSearchPlugin extends Plugin {
 		const { tmdbApiKey, notesFolder, templateFile } = this.settings;
 
 		if (!tmdbApiKey) {
+			// eslint-disable-next-line obsidianmd/ui/sentence-case
 			new Notice('Please set your TMDb API key in plugin settings.');
 			return;
 		}
@@ -57,9 +58,11 @@ export default class ActorSearchPlugin extends Plugin {
 			try {
 				person = await getPersonDetails(result.id, tmdbApiKey);
 			} catch {
+				/* eslint-disable obsidianmd/ui/sentence-case */
 				new Notice(
 					'Could not reach TMDb. Check your connection and API key.',
 				);
+				/* eslint-enable obsidianmd/ui/sentence-case */
 				return;
 			}
 
@@ -110,6 +113,7 @@ export default class ActorSearchPlugin extends Plugin {
 		const { tmdbApiKey } = this.settings;
 
 		if (!tmdbApiKey) {
+			// eslint-disable-next-line obsidianmd/ui/sentence-case
 			new Notice('Please set your TMDb API key in plugin settings.');
 			return;
 		}

@@ -47,13 +47,13 @@ export class ActorSearchSettingTab extends PluginSettingTab {
 			.addSearch((cb) => {
 				new FolderSuggest(this.app, cb.inputEl, (value) => {
 					this.plugin.settings.notesFolder = value;
-					this.plugin.saveSettings();
+					void this.plugin.saveSettings();
 				});
 				cb.setPlaceholder('Example: folder1/folder2')
 					.setValue(this.plugin.settings.notesFolder)
 					.onChange((new_folder) => {
 						this.plugin.settings.notesFolder = new_folder;
-						this.plugin.saveSettings();
+						void this.plugin.saveSettings();
 					});
 			});
 
@@ -63,9 +63,9 @@ export class ActorSearchSettingTab extends PluginSettingTab {
 				'Vault-relative path to your note template. Example: Templates/Actor.md',
 			)
 			.addSearch((searchEl) => {
-				new FileSuggest(this.app, searchEl.inputEl, async (value) => {
+				new FileSuggest(this.app, searchEl.inputEl, (value) => {
 					this.plugin.settings.templateFile = value;
-					await this.plugin.saveSettings();
+					void this.plugin.saveSettings();
 				});
 				searchEl
 					.setPlaceholder('Templates/Actor.md')
