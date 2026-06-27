@@ -1,25 +1,7 @@
-/* Wikipedia-style layout: float the first image right when cssclasses: [actor-wiki] */
-.markdown-preview-view.actor-wiki img:first-of-type {
-  float: right;
-  max-width: 220px;
-  width: 35%;
-  margin: 0 0 1.2em 1.8em;
-  border: 1px solid var(--background-modifier-border);
-  border-radius: 4px;
-  display: block;
-}
-
-/* Clear float after the note content */
-.markdown-preview-view.actor-wiki .markdown-preview-section::after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
 .actor-thumb-wrap {
   position: relative;
-  width: 40px;
-  height: 54px;
+  width: 80px;
+  height: 108px;
   flex-shrink: 0;
   border-radius: 3px;
   overflow: hidden;
