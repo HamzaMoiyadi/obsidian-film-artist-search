@@ -1,92 +1,131 @@
-# Obsidian Sample Plugin
+# Actor Search
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+An [Obsidian](https://obsidian.md) plugin that lets you search for actors and performers on [TMDb](https://www.themoviedb.org) and bring their data directly into your vault — either as a full note or as a quick wikilink.
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+---
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
+## Features
 
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open modal (simple)" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and outputs a Notice on click.
-- Registers a global interval which logs 'setInterval' to the console.
+### Create actor note
 
-## First time developing plugins?
+Opens a search palette, searches TMDb as you type, and creates a structured Markdown note for the person you select. The note is placed in your configured folder and opened immediately. If a note with that name already exists, the plugin skips creation and notifies you.
 
-Quick starting guide for new plugin devs:
+### Insert actor link
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `src/main.ts` to `main.js`.
-- Make changes to `src/main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+Opens the same search palette but inserts a `[[Name]]` wikilink at the cursor position in the active editor. Useful for quickly linking to a person while writing without leaving your current document.
 
-## Releasing new releases
+---
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+## Requirements
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+- Obsidian 1.4.10 or later
+- A free TMDb API key (v3) — get one at [themoviedb.org/settings/api](https://www.themoviedb.org/settings/api)
 
-## Adding your plugin to the community plugin list
+---
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+## Installation
 
-## How to use
+### Community plugins (recommended)
 
-- Clone this repo.
-- Make sure your NodeJS is at least v18 (`node --version`).
-- `npm i` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+1. Open **Settings → Community plugins** and disable Safe mode if prompted.
+2. Select **Browse** and search for **Actor Search**.
+3. Select **Install**, then **Enable**.
 
-## Manually installing the plugin
+### Manual install
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+1. Download `main.js`, `manifest.json`, and `styles.css` (if present) from the [latest release](https://github.com/hamzamoiyadi/obsidian-actor-search/releases/latest).
+2. Copy them to `<Vault>/.obsidian/plugins/obsidian-actor-search/`.
+3. Reload Obsidian and enable the plugin under **Settings → Community plugins**.
 
-## Improve code quality with eslint
+---
 
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code.
-- This project already has eslint preconfigured, you can invoke a check by running`npm run lint`
-- Together with a custom eslint [plugin](https://github.com/obsidianmd/eslint-plugin) for Obsidan specific code guidelines.
-- A GitHub action is preconfigured to automatically lint every commit on all branches.
+## Setup
 
-## Funding URL
+1. Go to **Settings → Actor Search**.
+2. Paste your **TMDb API key**.
+3. Optionally set a **notes folder** and a **template file** (see [Customization](#customization) below).
 
-You can include funding URLs where people who use your plugin can financially support it.
+---
 
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
+## Usage
 
-```json
-{
-	"fundingUrl": "https://buymeacoffee.com"
-}
+### Create a note
+
+Open the command palette (`Ctrl/Cmd + P`) and run **Actor Search: Create actor note**.
+
+1. Type a name in the search box — results appear as you type.
+2. Select a person from the list.
+3. The plugin fetches their full details from TMDb and creates a note at `<notes folder>/<Name>.md`.
+
+### Insert a wikilink
+
+Place your cursor where you want the link, then run **Actor Search: Insert actor link**.
+
+1. Search and select a person the same way.
+2. `[[Name]]` is inserted at the cursor.
+
+---
+
+## Customization
+
+All settings are in **Settings → Actor Search**.
+
+| Setting | Default | Description |
+|---|---|---|
+| **TMDb API key** | _(empty)_ | Required. Your TMDb v3 API key. Stored locally; never sent anywhere except TMDb. |
+| **New file location** | `People/` | Vault folder where new actor notes are created. Supports autocomplete. |
+| **Template file** | _(empty)_ | Vault-relative path to a Markdown template. If empty, the note is created blank. Supports autocomplete. |
+
+### Template variables
+
+When a template file is set, the plugin renders it by replacing `{{variable}}` placeholders with data fetched from TMDb.
+
+| Variable | Example value | Description |
+|---|---|---|
+| `{{name}}` | `Cate Blanchett` | Full name |
+| `{{birthday}}` | `1969-05-14` | Date of birth (ISO format), or blank |
+| `{{deathday}}` | _(blank)_ | Date of death (ISO format), or blank |
+| `{{placeOfBirth}}` | `Melbourne, Australia` | Birthplace, or blank |
+| `{{gender}}` | `1` | `0` = not set, `1` = female, `2` = male, `3` = non-binary |
+| `{{profileImageUrl}}` | `https://image.tmdb.org/t/p/w185/…` | Direct URL to the TMDb profile photo (185 px wide), or blank |
+| `{{tmdbUrl}}` | `https://www.themoviedb.org/person/112` | Link to the person's TMDb page |
+
+**Example template** (`Templates/Actor.md`):
+
+```markdown
+---
+name: "{{name}}"
+born: "{{birthday}}"
+birthplace: "{{placeOfBirth}}"
+tmdb: "{{tmdbUrl}}"
+---
+
+![{{name}}]({{profileImageUrl}})
+
+## {{name}}
+
+- Born: {{birthday}} in {{placeOfBirth}}
+- TMDb: {{tmdbUrl}}
 ```
 
-If you have multiple URLs, you can also do:
+Any `{{variable}}` that has no value is replaced with an empty string.
 
-```json
-{
-	"fundingUrl": {
-		"Buy Me a Coffee": "https://buymeacoffee.com",
-		"GitHub Sponsor": "https://github.com/sponsors",
-		"Patreon": "https://www.patreon.com/"
-	}
-}
-```
+---
 
-## API Documentation
+## Privacy & network usage
 
-See https://docs.obsidian.md
+- All network requests go directly to `api.themoviedb.org` using Obsidian's built-in `requestUrl` (works on mobile too).
+- No data is collected or transmitted to any other service.
+- Your API key is stored locally in your vault's plugin data.
+
+---
+
+## Contributing
+
+Issues and pull requests are welcome. Run `npm install` then `npm run dev` to start the watch build.
+
+---
+
+## License
+
+[MIT](LICENSE)

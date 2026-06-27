@@ -16,6 +16,7 @@ export function renderTemplate(template: string, person: PersonDetails): string 
     gender: String(person.gender),
     profileImageUrl: profileImageUrl,
     tmdbUrl: `${TMDB_PERSON_BASE}/${person.id}`,
+    biography: person.biography ?? '',
     industry: '',
   };
 
