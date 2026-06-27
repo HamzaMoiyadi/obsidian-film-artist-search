@@ -29,8 +29,22 @@ export class ActorSearchModal extends SuggestModal<PersonSearchResult> {
 	}
 
 	renderSuggestion(result: PersonSearchResult, el: HTMLElement): void {
-		el.createEl('div', { text: result.name });
-		el.createEl('small', {
+		el.addClass('actor-search-suggestion');
+
+		// Thumbnail column
+		const wrap = el.createDiv({ cls: 'actor-thumb-wrap' });
+		wrap.createSpan({ cls: 'actor-thumb-placeholder', text: '👤' });
+
+		if (result.profile_path) {
+			const img = wrap.createEl('img', { cls: 'actor-thumb-img' });
+			img.src = `https://image.tmdb.org/t/p/w92${result.profile_path}`;
+			img.addEventListener('load', () => img.addClass('loaded'));
+		}
+
+		// Text column
+		const text = el.createDiv();
+		text.createEl('div', { text: result.name });
+		text.createEl('small', {
 			text: result.known_for_department || 'Acting',
 			cls: 'actor-search-dept',
 		});
