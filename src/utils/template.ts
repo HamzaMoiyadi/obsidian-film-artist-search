@@ -8,6 +8,9 @@ export function renderTemplate(template: string, person: PersonDetails): string 
     ? `${IMAGE_BASE}${person.profile_path}`
     : '';
 
+  const today = new Date();
+  const date = today.toISOString().split('T')[0] ?? '';
+
   const vars: Record<string, string> = {
     name: person.name,
     birthday: person.birthday ?? '',
@@ -18,6 +21,7 @@ export function renderTemplate(template: string, person: PersonDetails): string 
     tmdbUrl: `${TMDB_PERSON_BASE}/${person.id}`,
     biography: person.biography ?? '',
     industry: '',
+    date,
   };
 
   return template.replace(/\{\{(\w+)\}\}/g, (_, key: string) => vars[key] ?? '');

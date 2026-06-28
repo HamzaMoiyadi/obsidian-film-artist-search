@@ -5,16 +5,27 @@ import { PersonSearchResult } from '../types';
 export class ActorSearchModal extends SuggestModal<PersonSearchResult> {
 	private apiKey: string;
 	private onChoose: (result: PersonSearchResult) => void | Promise<void>;
+	private initialQuery: string;
 
 	constructor(
 		app: App,
 		apiKey: string,
 		onChoose: (result: PersonSearchResult) => void | Promise<void>,
+		initialQuery = '',
 	) {
 		super(app);
 		this.apiKey = apiKey;
 		this.onChoose = onChoose;
+		this.initialQuery = initialQuery;
 		this.setPlaceholder('Search for an actor or performer…');
+	}
+
+	onOpen() {
+		super.onOpen();
+		if (this.initialQuery) {
+			this.inputEl.value = this.initialQuery;
+			this.inputEl.dispatchEvent(new Event('input'));
+		}
 	}
 
 	async getSuggestions(query: string): Promise<PersonSearchResult[]> {

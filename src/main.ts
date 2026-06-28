@@ -1,4 +1,11 @@
-import { Editor, Notice, Plugin, TFile, normalizePath } from 'obsidian';
+import {
+	Editor,
+	MarkdownView,
+	Notice,
+	Plugin,
+	TFile,
+	normalizePath,
+} from 'obsidian';
 import {
 	ActorSearchSettings,
 	DEFAULT_SETTINGS,
@@ -30,8 +37,7 @@ export default class ActorSearchPlugin extends Plugin {
 		this.addCommand({
 			id: 'insert-actor-metadata',
 			name: 'Insert actor metadata',
-			editorCallback: (editor: Editor) =>
-				this.insertActorMetadata(editor),
+			callback: () => this.insertActorMetadata(),
 		});
 	}
 
@@ -116,7 +122,7 @@ export default class ActorSearchPlugin extends Plugin {
 		}).open();
 	}
 
-	private insertActorMetadata(editor: Editor): void {
+	private insertActorMetadata(): void {
 		const { tmdbApiKey, templateFile } = this.settings;
 
 		if (!tmdbApiKey) {
@@ -125,10 +131,20 @@ export default class ActorSearchPlugin extends Plugin {
 			return;
 		}
 
-		const activeFile = this.app.workspace.getActiveFile();
-		const initialQuery = activeFile?.basename ?? '';
+		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+		if (!view) {
+			new Notice('Open a markdown note first.');
+			return;
+		}
 
-		const modal = new ActorSearchModal(
+		const editor = view.editor;
+		const initialQuery = view.file?.basename ?? '';
+
+		// Move cursor into the editor body before opening the modal so that
+		// content insertion works even when focus was on the inline title.
+		editor.focus();
+
+		new ActorSearchModal(
 			this.app,
 			tmdbApiKey,
 			async (result) => {
@@ -162,14 +178,8 @@ export default class ActorSearchPlugin extends Plugin {
 
 				editor.setValue(content);
 			},
-		);
-
-		modal.open();
-
-		if (initialQuery) {
-			modal.inputEl.value = initialQuery;
-			modal.inputEl.dispatchEvent(new Event('input'));
-		}
+			initialQuery,
+		).open();
 	}
 
 	private insertActorLink(editor: Editor): void {
