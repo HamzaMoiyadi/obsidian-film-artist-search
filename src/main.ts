@@ -102,11 +102,9 @@ export default class FilmArtistSearchPlugin extends Plugin {
 			try {
 				person = await getPersonDetails(result.id, tmdbApiKey);
 			} catch {
-				/* eslint-disable obsidianmd/ui/sentence-case */
 				new Notice(
-					'Could not reach TMDb. Check your connection and API key.',
+					'Could not reach tmdb. Check your connection and API key.',
 				);
-				/* eslint-enable obsidianmd/ui/sentence-case */
 				return;
 			}
 
