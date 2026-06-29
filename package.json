@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-film-artist-search",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"description": "Search TMDb for actors, directors, producers, etc. and create structured vault notes or insert wikilinks.",
 	"main": "main.js",
 	"type": "module",
