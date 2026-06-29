@@ -268,3 +268,17 @@ this.registerInterval(
 - Developer policies: https://docs.obsidian.md/Developer+policies
 - Plugin guidelines: https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines
 - Style guide: https://help.obsidian.md/style-guide
+
+## Agent skills
+
+### Issue tracker
+
+Issues live as local markdown files under `docs/issues/`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Using the five canonical triage role strings unchanged. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context layout — one `CONTEXT.md` at the repo root plus `docs/adr/` for decisions. See `docs/agents/domain.md`.
