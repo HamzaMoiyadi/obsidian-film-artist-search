@@ -1,24 +1,24 @@
-import { App, PluginSettingTab, Setting } from 'obsidian';
-import ActorSearchPlugin from './main';
+import { App, PluginSettingTab, SecretComponent, Setting } from 'obsidian';
+import FilmArtistSearchPlugin from './main';
 import { FileSuggest } from './settings/FileSuggester';
 import { FolderSuggest } from './settings/FolderSuggester';
 
-export interface ActorSearchSettings {
+export interface FilmArtistSearchSettings {
 	tmdbApiKey: string;
 	notesFolder: string;
 	templateFile: string;
 }
 
-export const DEFAULT_SETTINGS: ActorSearchSettings = {
+export const DEFAULT_SETTINGS: FilmArtistSearchSettings = {
 	tmdbApiKey: '',
 	notesFolder: 'People/',
 	templateFile: '',
 };
 
-export class ActorSearchSettingTab extends PluginSettingTab {
-	plugin: ActorSearchPlugin;
+export class FilmArtistSearchSettingTab extends PluginSettingTab {
+	plugin: FilmArtistSearchPlugin;
 
-	constructor(app: App, plugin: ActorSearchPlugin) {
+	constructor(app: App, plugin: FilmArtistSearchPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
@@ -29,17 +29,18 @@ export class ActorSearchSettingTab extends PluginSettingTab {
 		new Setting(this.containerEl)
 			// eslint-disable-next-line obsidianmd/ui/sentence-case
 			.setName('TMDb API key')
-			// eslint-disable-next-line obsidianmd/ui/sentence-case
-			.setDesc('Your TMDb v3 API key. Get one free at themoviedb.org.')
-			.addText((text) => {
-				text.inputEl.type = 'password';
-				text.setPlaceholder('Paste your API key')
+			.setDesc(
+				// eslint-disable-next-line obsidianmd/ui/sentence-case
+				'Select the secret that holds your TMDb v3 API key. Add it via Settings → Secret storage.',
+			)
+			.addComponent((el) =>
+				new SecretComponent(this.app, el)
 					.setValue(this.plugin.settings.tmdbApiKey)
 					.onChange(async (value) => {
 						this.plugin.settings.tmdbApiKey = value;
 						await this.plugin.saveSettings();
-					});
-			});
+					}),
+			);
 
 		new Setting(this.containerEl)
 			.setName('New file location')

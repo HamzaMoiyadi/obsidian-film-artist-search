@@ -3,6 +3,19 @@ import { PersonDetails } from '../types';
 const IMAGE_BASE = 'https://image.tmdb.org/t/p/w185';
 const TMDB_PERSON_BASE = 'https://www.themoviedb.org/person';
 
+export const DEFAULT_TEMPLATE = `---
+name: "{{name}}"
+born: "{{birthday}}"
+died: "{{deathday}}"
+birthplace: "{{placeOfBirth}}"
+tmdb: "{{tmdbUrl}}"
+image: "{{profileImageUrl}}"
+---
+
+![{{name}}]({{profileImageUrl}})
+
+{{biography}}`;
+
 export function renderTemplate(template: string, person: PersonDetails): string {
   const profileImageUrl = person.profile_path
     ? `${IMAGE_BASE}${person.profile_path}`

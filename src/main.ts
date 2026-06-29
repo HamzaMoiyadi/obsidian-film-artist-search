@@ -7,37 +7,37 @@ import {
 	normalizePath,
 } from 'obsidian';
 import {
-	ActorSearchSettings,
+	FilmArtistSearchSettings,
 	DEFAULT_SETTINGS,
-	ActorSearchSettingTab,
+	FilmArtistSearchSettingTab,
 } from './settings';
-import { ActorSearchModal } from './ui/ActorSearchModal';
+import { FilmArtistSearchModal } from './ui/FilmArtistSearchModal';
 import { getPersonDetails } from './tmdb/details';
-import { renderTemplate } from './utils/template';
+import { renderTemplate, DEFAULT_TEMPLATE } from './utils/template';
 
-export default class ActorSearchPlugin extends Plugin {
-	settings!: ActorSearchSettings;
+export default class FilmArtistSearchPlugin extends Plugin {
+	settings!: FilmArtistSearchSettings;
 
 	async onload() {
 		await this.loadSettings();
-		this.addSettingTab(new ActorSearchSettingTab(this.app, this));
+		this.addSettingTab(new FilmArtistSearchSettingTab(this.app, this));
 
 		this.addCommand({
-			id: 'create-actor-note',
-			name: 'Create actor note',
-			callback: () => this.createActorNote(),
+			id: 'create-film-artist-note',
+			name: 'Create film artist note',
+			callback: () => this.createFilmArtistNote(),
 		});
 
 		this.addCommand({
-			id: 'insert-actor-link',
-			name: 'Insert actor link',
-			editorCallback: (editor: Editor) => this.insertActorLink(editor),
+			id: 'insert-film-artist-link',
+			name: 'Insert film artist link',
+			editorCallback: (editor: Editor) => this.insertFilmArtistLink(editor),
 		});
 
 		this.addCommand({
-			id: 'insert-actor-metadata',
-			name: 'Insert actor metadata',
-			callback: () => this.insertActorMetadata(),
+			id: 'insert-film-artist-metadata',
+			name: 'Insert film artist metadata',
+			checkCallback: (checking) => this.insertFilmArtistMetadata(checking),
 		});
 	}
 
@@ -47,7 +47,7 @@ export default class ActorSearchPlugin extends Plugin {
 		this.settings = Object.assign(
 			{},
 			DEFAULT_SETTINGS,
-			(await this.loadData()) as Partial<ActorSearchSettings>,
+			(await this.loadData()) as Partial<FilmArtistSearchSettings>,
 		);
 	}
 
@@ -55,8 +55,24 @@ export default class ActorSearchPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	private createActorNote(): void {
-		const { tmdbApiKey, notesFolder, templateFile } = this.settings;
+	private async renderPersonTemplate(
+		person: Awaited<ReturnType<typeof getPersonDetails>>,
+	): Promise<string | null> {
+		const { templateFile } = this.settings;
+		if (!templateFile) return renderTemplate(DEFAULT_TEMPLATE, person);
+		const tplFile = this.app.vault.getAbstractFileByPath(
+			normalizePath(templateFile),
+		);
+		if (!tplFile || !(tplFile instanceof TFile)) {
+			new Notice('Template file not found. Check plugin settings.');
+			return null;
+		}
+		return renderTemplate(await this.app.vault.read(tplFile), person);
+	}
+
+	private createFilmArtistNote(): void {
+		const { notesFolder } = this.settings;
+		const tmdbApiKey = this.app.secretStorage.getSecret(this.settings.tmdbApiKey);
 
 		if (!tmdbApiKey) {
 			// eslint-disable-next-line obsidianmd/ui/sentence-case
@@ -64,7 +80,7 @@ export default class ActorSearchPlugin extends Plugin {
 			return;
 		}
 
-		new ActorSearchModal(this.app, tmdbApiKey, async (result) => {
+		new FilmArtistSearchModal(this.app, tmdbApiKey, async (result) => {
 			// 1. Fetch full details
 			let person: Awaited<ReturnType<typeof getPersonDetails>>;
 
@@ -91,20 +107,8 @@ export default class ActorSearchPlugin extends Plugin {
 				}
 
 				// 4. Load and render template
-				let content = '';
-				if (templateFile) {
-					const tplFile = this.app.vault.getAbstractFileByPath(
-						normalizePath(templateFile),
-					);
-					if (!tplFile || !(tplFile instanceof TFile)) {
-						new Notice(
-							'Template file not found. Check plugin settings.',
-						);
-						return;
-					}
-					const raw = await this.app.vault.read(tplFile);
-					content = renderTemplate(raw, person);
-				}
+				const content = await this.renderPersonTemplate(person);
+				if (content === null) return;
 
 				// 5. Ensure folder exists
 				await this.app.vault.createFolder(folder).catch(() => {
@@ -122,18 +126,16 @@ export default class ActorSearchPlugin extends Plugin {
 		}).open();
 	}
 
-	private insertActorMetadata(): void {
-		const { tmdbApiKey, templateFile } = this.settings;
+	private insertFilmArtistMetadata(checking: boolean): boolean | void {
+		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+		if (!view) return false;
+		if (checking) return true;
+
+		const tmdbApiKey = this.app.secretStorage.getSecret(this.settings.tmdbApiKey);
 
 		if (!tmdbApiKey) {
 			// eslint-disable-next-line obsidianmd/ui/sentence-case
 			new Notice('Please set your TMDb API key in plugin settings.');
-			return;
-		}
-
-		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-		if (!view) {
-			new Notice('Open a markdown note first.');
 			return;
 		}
 
@@ -144,7 +146,7 @@ export default class ActorSearchPlugin extends Plugin {
 		// content insertion works even when focus was on the inline title.
 		editor.focus();
 
-		new ActorSearchModal(
+		new FilmArtistSearchModal(
 			this.app,
 			tmdbApiKey,
 			async (result) => {
@@ -161,20 +163,8 @@ export default class ActorSearchPlugin extends Plugin {
 					return;
 				}
 
-				let content = '';
-				if (templateFile) {
-					const tplFile = this.app.vault.getAbstractFileByPath(
-						normalizePath(templateFile),
-					);
-					if (!tplFile || !(tplFile instanceof TFile)) {
-						new Notice(
-							'Template file not found. Check plugin settings.',
-						);
-						return;
-					}
-					const raw = await this.app.vault.read(tplFile);
-					content = renderTemplate(raw, person);
-				}
+				const content = await this.renderPersonTemplate(person);
+				if (content === null) return;
 
 				editor.setValue(content);
 			},
@@ -182,8 +172,8 @@ export default class ActorSearchPlugin extends Plugin {
 		).open();
 	}
 
-	private insertActorLink(editor: Editor): void {
-		const { tmdbApiKey } = this.settings;
+	private insertFilmArtistLink(editor: Editor): void {
+		const tmdbApiKey = this.app.secretStorage.getSecret(this.settings.tmdbApiKey);
 
 		if (!tmdbApiKey) {
 			// eslint-disable-next-line obsidianmd/ui/sentence-case
@@ -191,7 +181,7 @@ export default class ActorSearchPlugin extends Plugin {
 			return;
 		}
 
-		new ActorSearchModal(this.app, tmdbApiKey, (result) => {
+		new FilmArtistSearchModal(this.app, tmdbApiKey, (result) => {
 			editor.replaceSelection(`[[${result.name}]]`);
 		}).open();
 	}
