@@ -14,6 +14,7 @@ import {
 import { FilmArtistSearchModal } from './ui/FilmArtistSearchModal';
 import { getPersonDetails } from './tmdb/details';
 import { renderTemplate, DEFAULT_TEMPLATE } from './utils/template';
+import { downloadProfileImage } from './utils/image';
 
 export default class FilmArtistSearchPlugin extends Plugin {
 	settings!: FilmArtistSearchSettings;
@@ -57,9 +58,10 @@ export default class FilmArtistSearchPlugin extends Plugin {
 
 	private async renderPersonTemplate(
 		person: Awaited<ReturnType<typeof getPersonDetails>>,
+		localProfileImagePath = '',
 	): Promise<string | null> {
 		const { templateFile } = this.settings;
-		if (!templateFile) return renderTemplate(DEFAULT_TEMPLATE, person);
+		if (!templateFile) return renderTemplate(DEFAULT_TEMPLATE, person, localProfileImagePath);
 		const tplFile = this.app.vault.getAbstractFileByPath(
 			normalizePath(templateFile),
 		);
@@ -67,7 +69,7 @@ export default class FilmArtistSearchPlugin extends Plugin {
 			new Notice('Template file not found. Check plugin settings.');
 			return null;
 		}
-		return renderTemplate(await this.app.vault.read(tplFile), person);
+		return renderTemplate(await this.app.vault.read(tplFile), person, localProfileImagePath);
 	}
 
 	private createFilmArtistNote(): void {
@@ -106,16 +108,21 @@ export default class FilmArtistSearchPlugin extends Plugin {
 					return;
 				}
 
-				// 4. Load and render template
-				const content = await this.renderPersonTemplate(person);
+				// 4. Optionally download profile image
+				const localProfileImagePath = this.settings.downloadProfileImages
+					? await downloadProfileImage(this.app, person, this.settings.imageFolder)
+					: '';
+
+				// 5. Load and render template
+				const content = await this.renderPersonTemplate(person, localProfileImagePath);
 				if (content === null) return;
 
-				// 5. Ensure folder exists
+				// 6. Ensure folder exists
 				await this.app.vault.createFolder(folder).catch(() => {
 					// Folder may already exist — ignore
 				});
 
-				// 6. Write note and open
+				// 7. Write note and open
 				const file = await this.app.vault.create(notePath, content);
 				await this.app.workspace.getLeaf(false).openFile(file);
 			} catch {
@@ -163,7 +170,11 @@ export default class FilmArtistSearchPlugin extends Plugin {
 					return;
 				}
 
-				const content = await this.renderPersonTemplate(person);
+				const localProfileImagePath = this.settings.downloadProfileImages
+					? await downloadProfileImage(this.app, person, this.settings.imageFolder)
+					: '';
+
+				const content = await this.renderPersonTemplate(person, localProfileImagePath);
 				if (content === null) return;
 
 				editor.setValue(content);
