@@ -1,16 +1,16 @@
 # Film Artist Search
 
-An [Obsidian](https://obsidian.md) plugin that lets you search for actors and performers on [TMDb](https://www.themoviedb.org) and bring their data directly into your vault — either as a full note or as a quick wikilink.
+An [Obsidian](https://obsidian.md) plugin that lets you search for actors, directors, producers, and other film-adjacent artists on [TMDb](https://www.themoviedb.org) and bring their data directly into your vault — either as a full note or as a quick wikilink.
 
 ---
 
 ## Features
 
-### Create actor note
+### Create Film Artist note
 
 Opens a search palette, searches TMDb as you type, and creates a structured Markdown note for the person you select. The note is placed in your configured folder and opened immediately. If a note with that name already exists, the plugin skips creation and notifies you.
 
-### Insert actor link
+### Insert Film Artist link
 
 Opens the same search palette but inserts a `[[Name]]` wikilink at the cursor position in the active editor. Useful for quickly linking to a person while writing without leaving your current document.
 
@@ -92,7 +92,7 @@ All settings are in **Settings → Film Artist Search**.
 | Setting | Default | Description |
 |---|---|---|
 | **TMDb API key** | _(empty)_ | Required. Select the secret that holds your TMDb v3 API key (added via **Settings → Secret storage**). Never sent anywhere except TMDb. |
-| **New file location** | `People/` | Vault folder where new actor notes are created. Supports autocomplete. |
+| **New file location** | `People/` | Vault folder where new artist notes are created. Supports autocomplete. |
 | **Template file** | _(empty)_ | Vault-relative path to a Markdown template. If empty, a built-in default template with YAML frontmatter is used. Supports autocomplete. |
 | **Download profile images** | Off | When on, saves the TMDb profile photo to your vault at note-creation time. |
 | **Image folder** | _(empty)_ | Vault folder where profile images are saved. Leave blank to use the folder configured under **Settings → Files & Links → Default location for new attachments**. |
