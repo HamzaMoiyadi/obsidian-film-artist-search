@@ -14,7 +14,7 @@ export async function downloadProfileImage(
 	}
 
 	const folder = resolveImageFolder(app, imageFolder);
-	const filename = `${person.name}-${person.id}.jpg`;
+	const filename = `${person.name.replace(/\s+/g, '-')}-${person.id}.jpg`;
 	const imagePath = normalizePath(folder ? `${folder}/${filename}` : filename);
 
 	if (app.vault.getAbstractFileByPath(imagePath)) {

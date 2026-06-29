@@ -15,6 +15,7 @@ import { FilmArtistSearchModal } from './ui/FilmArtistSearchModal';
 import { getPersonDetails } from './tmdb/details';
 import { renderTemplate, DEFAULT_TEMPLATE } from './utils/template';
 import { downloadProfileImage } from './utils/image';
+import { mergeIntoExistingNote } from './utils/frontmatter';
 
 export default class FilmArtistSearchPlugin extends Plugin {
 	settings!: FilmArtistSearchSettings;
@@ -177,7 +178,8 @@ export default class FilmArtistSearchPlugin extends Plugin {
 				const content = await this.renderPersonTemplate(person, localProfileImagePath);
 				if (content === null) return;
 
-				editor.setValue(content);
+				const existingContent = editor.getValue();
+				editor.setValue(mergeIntoExistingNote(existingContent, content));
 			},
 			initialQuery,
 		).open();
