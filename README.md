@@ -43,7 +43,7 @@ Opens the search palette pre-populated with the active note's title. On selectio
 
 ### Manual install
 
-1. Download `main.js`, `manifest.json`, and `styles.css` (if present) from the [latest release](https://github.com/hamzamoiyadi/obsidian-film-artist-search/releases/latest).
+1. Download `main.js`, `manifest.json` from the [latest release](https://github.com/hamzamoiyadi/obsidian-film-artist-search/releases/latest).
 2. Copy them to `<Vault>/.obsidian/plugins/obsidian-film-artist-search/`.
 3. Reload Obsidian and enable the plugin under **Settings → Community plugins**.
 
@@ -83,8 +83,6 @@ Open a note in edit mode, then run **Film Artist Search: Insert film artist meta
 2. Select a person to confirm.
 3. The plugin fetches their full details from TMDb and replaces the entire note content with your rendered template.
 
-> **Tip:** If the command is missing from the palette, switch the note from reading mode to edit mode first.
-
 ---
 
 ## Customization
@@ -96,6 +94,8 @@ All settings are in **Settings → Film Artist Search**.
 | **TMDb API key** | _(empty)_ | Required. Select the secret that holds your TMDb v3 API key (added via **Settings → Secret storage**). Never sent anywhere except TMDb. |
 | **New file location** | `People/` | Vault folder where new actor notes are created. Supports autocomplete. |
 | **Template file** | _(empty)_ | Vault-relative path to a Markdown template. If empty, a built-in default template with YAML frontmatter is used. Supports autocomplete. |
+| **Download profile images** | Off | When on, saves the TMDb profile photo to your vault at note-creation time. |
+| **Image folder** | _(empty)_ | Vault folder where profile images are saved. Leave blank to use the folder configured under **Settings → Files & Links → Default location for new attachments**. |
 
 ### Template variables
 
@@ -109,12 +109,30 @@ When a template file is set, the plugin renders it by replacing `{{variable}}` p
 | `{{placeOfBirth}}` | `Melbourne, Australia` | Birthplace, or blank |
 | `{{gender}}` | `1` | `0` = not set, `1` = female, `2` = male, `3` = non-binary |
 | `{{profileImageUrl}}` | `https://image.tmdb.org/t/p/w185/…` | Direct URL to the TMDb profile photo (185 px wide), or blank |
+| `{{localProfileImagePath}}` | `People/Images/cate-blanchett.jpg` | Vault-relative path to the downloaded profile image, or blank if **Download profile images** is off |
 | `{{tmdbUrl}}` | `https://www.themoviedb.org/person/112` | Link to the person's TMDb page |
 | `{{biography}}` | `Born in…` | TMDb biography text, or blank |
 | `{{date}}` | `2026-06-28` | Today's date in ISO format, set at note creation time |
-| `{{industry}}` | _(blank)_ | Reserved for future use; always blank in v1 |
 
-**Example template** (`Templates/Actor.md`):
+**Built-in default template** (used when no template file is configured):
+
+```markdown
+---
+name: "{{name}}"
+born: "{{birthday}}"
+died: "{{deathday}}"
+birthplace: "{{placeOfBirth}}"
+tmdb: "{{tmdbUrl}}"
+image: "{{localProfileImagePath}}"
+---
+
+![[{{localProfileImagePath}}]]
+![{{name}}]({{profileImageUrl}})
+
+{{biography}}
+```
+
+**Example custom template** (`Templates/Actor.md`):
 
 ```markdown
 ---
@@ -122,9 +140,10 @@ name: "{{name}}"
 born: "{{birthday}}"
 birthplace: "{{placeOfBirth}}"
 tmdb: "{{tmdbUrl}}"
+image: "{{localProfileImagePath}}"
 ---
 
-![{{name}}]({{profileImageUrl}})
+![[{{localProfileImagePath}}]]
 
 ## {{name}}
 
@@ -138,7 +157,7 @@ Any `{{variable}}` that has no value is replaced with an empty string.
 
 ## Privacy & network usage
 
-- All network requests go directly to `api.themoviedb.org` using Obsidian's built-in `requestUrl` (works on mobile too).
+- All network requests go directly to `api.themoviedb.org` (metadata) and `image.tmdb.org` (profile photos, when **Download profile images** is on).
 - No data is collected or transmitted to any other service.
 - Your API key is stored in Obsidian's built-in Secret storage, not in the plugin's own data files.
 

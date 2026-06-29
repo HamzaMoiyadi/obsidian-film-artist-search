@@ -100,8 +100,8 @@ export default class FilmArtistSearchPlugin extends Plugin {
 
 			try {
 				// 2. Resolve note path
-				const folder = normalizePath(notesFolder || 'People');
-				const notePath = normalizePath(`${folder}/${person.name}.md`);
+				const folder = notesFolder ? normalizePath(notesFolder) : '';
+				const notePath = normalizePath(folder ? `${folder}/${person.name}.md` : `${person.name}.md`);
 
 				// 3. Check for existing note
 				if (this.app.vault.getAbstractFileByPath(notePath)) {
@@ -118,10 +118,12 @@ export default class FilmArtistSearchPlugin extends Plugin {
 				const content = await this.renderPersonTemplate(person, localProfileImagePath);
 				if (content === null) return;
 
-				// 6. Ensure folder exists
-				await this.app.vault.createFolder(folder).catch(() => {
-					// Folder may already exist — ignore
-				});
+				// 6. Ensure folder exists (skip if saving to vault root)
+				if (folder) {
+					await this.app.vault.createFolder(folder).catch(() => {
+						// Folder may already exist — ignore
+					});
+				}
 
 				// 7. Write note and open
 				const file = await this.app.vault.create(notePath, content);

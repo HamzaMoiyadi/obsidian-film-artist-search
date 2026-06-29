@@ -13,7 +13,7 @@ export interface FilmArtistSearchSettings {
 
 export const DEFAULT_SETTINGS: FilmArtistSearchSettings = {
 	tmdbApiKey: '',
-	notesFolder: 'People/',
+	notesFolder: '',
 	templateFile: '',
 	downloadProfileImages: false,
 	imageFolder: '',
