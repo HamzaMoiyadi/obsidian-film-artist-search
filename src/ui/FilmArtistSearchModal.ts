@@ -21,7 +21,7 @@ export class FilmArtistSearchModal extends SuggestModal<PersonSearchResult> {
 	}
 
 	onOpen() {
-		super.onOpen();
+		void super.onOpen();
 		if (this.initialQuery) {
 			this.inputEl.value = this.initialQuery;
 			this.inputEl.dispatchEvent(new Event('input'));
