@@ -33,8 +33,7 @@ export class FilmArtistSearchModal extends SuggestModal<PersonSearchResult> {
 		try {
 			return await searchPersons(query, this.apiKey);
 		} catch {
-			// eslint-disable-next-line obsidianmd/ui/sentence-case
-			new Notice('Could not reach TMDb. Check your connection.');
+			new Notice('Could not reach tmdb. Check your connection.');
 			return [];
 		}
 	}

@@ -33,13 +33,15 @@ export default class FilmArtistSearchPlugin extends Plugin {
 		this.addCommand({
 			id: 'insert-film-artist-link',
 			name: 'Insert film artist link',
-			editorCallback: (editor: Editor) => this.insertFilmArtistLink(editor),
+			editorCallback: (editor: Editor) =>
+				this.insertFilmArtistLink(editor),
 		});
 
 		this.addCommand({
 			id: 'insert-film-artist-metadata',
 			name: 'Insert film artist metadata',
-			checkCallback: (checking) => this.insertFilmArtistMetadata(checking),
+			checkCallback: (checking) =>
+				this.insertFilmArtistMetadata(checking),
 		});
 	}
 
@@ -62,7 +64,12 @@ export default class FilmArtistSearchPlugin extends Plugin {
 		localProfileImagePath = '',
 	): Promise<string | null> {
 		const { templateFile } = this.settings;
-		if (!templateFile) return renderTemplate(DEFAULT_TEMPLATE, person, localProfileImagePath);
+		if (!templateFile)
+			return renderTemplate(
+				DEFAULT_TEMPLATE,
+				person,
+				localProfileImagePath,
+			);
 		const tplFile = this.app.vault.getAbstractFileByPath(
 			normalizePath(templateFile),
 		);
@@ -70,16 +77,21 @@ export default class FilmArtistSearchPlugin extends Plugin {
 			new Notice('Template file not found. Check plugin settings.');
 			return null;
 		}
-		return renderTemplate(await this.app.vault.read(tplFile), person, localProfileImagePath);
+		return renderTemplate(
+			await this.app.vault.read(tplFile),
+			person,
+			localProfileImagePath,
+		);
 	}
 
 	private createFilmArtistNote(): void {
 		const { notesFolder } = this.settings;
-		const tmdbApiKey = this.app.secretStorage.getSecret(this.settings.tmdbApiKey);
+		const tmdbApiKey = this.app.secretStorage.getSecret(
+			this.settings.tmdbApiKey,
+		);
 
 		if (!tmdbApiKey) {
-			// eslint-disable-next-line obsidianmd/ui/sentence-case
-			new Notice('Please set your TMDb API key in plugin settings.');
+			new Notice('Please set your tmdb API key in plugin settings.');
 			return;
 		}
 
@@ -101,7 +113,11 @@ export default class FilmArtistSearchPlugin extends Plugin {
 			try {
 				// 2. Resolve note path
 				const folder = notesFolder ? normalizePath(notesFolder) : '';
-				const notePath = normalizePath(folder ? `${folder}/${person.name}.md` : `${person.name}.md`);
+				const notePath = normalizePath(
+					folder
+						? `${folder}/${person.name}.md`
+						: `${person.name}.md`,
+				);
 
 				// 3. Check for existing note
 				if (this.app.vault.getAbstractFileByPath(notePath)) {
@@ -110,12 +126,20 @@ export default class FilmArtistSearchPlugin extends Plugin {
 				}
 
 				// 4. Optionally download profile image
-				const localProfileImagePath = this.settings.downloadProfileImages
-					? await downloadProfileImage(this.app, person, this.settings.imageFolder)
+				const localProfileImagePath = this.settings
+					.downloadProfileImages
+					? await downloadProfileImage(
+							this.app,
+							person,
+							this.settings.imageFolder,
+						)
 					: '';
 
 				// 5. Load and render template
-				const content = await this.renderPersonTemplate(person, localProfileImagePath);
+				const content = await this.renderPersonTemplate(
+					person,
+					localProfileImagePath,
+				);
 				if (content === null) return;
 
 				// 6. Ensure folder exists (skip if saving to vault root)
@@ -141,11 +165,12 @@ export default class FilmArtistSearchPlugin extends Plugin {
 		if (!view) return false;
 		if (checking) return true;
 
-		const tmdbApiKey = this.app.secretStorage.getSecret(this.settings.tmdbApiKey);
+		const tmdbApiKey = this.app.secretStorage.getSecret(
+			this.settings.tmdbApiKey,
+		);
 
 		if (!tmdbApiKey) {
-			// eslint-disable-next-line obsidianmd/ui/sentence-case
-			new Notice('Please set your TMDb API key in plugin settings.');
+			new Notice('Please set your API key in plugin settings.');
 			return;
 		}
 
@@ -165,34 +190,43 @@ export default class FilmArtistSearchPlugin extends Plugin {
 				try {
 					person = await getPersonDetails(result.id, tmdbApiKey);
 				} catch {
-					/* eslint-disable obsidianmd/ui/sentence-case */
 					new Notice(
-						'Could not reach TMDb. Check your connection and API key.',
+						'Could not reach tmdb. Check your connection and API key.',
 					);
-					/* eslint-enable obsidianmd/ui/sentence-case */
 					return;
 				}
 
-				const localProfileImagePath = this.settings.downloadProfileImages
-					? await downloadProfileImage(this.app, person, this.settings.imageFolder)
+				const localProfileImagePath = this.settings
+					.downloadProfileImages
+					? await downloadProfileImage(
+							this.app,
+							person,
+							this.settings.imageFolder,
+						)
 					: '';
 
-				const content = await this.renderPersonTemplate(person, localProfileImagePath);
+				const content = await this.renderPersonTemplate(
+					person,
+					localProfileImagePath,
+				);
 				if (content === null) return;
 
 				const existingContent = editor.getValue();
-				editor.setValue(mergeIntoExistingNote(existingContent, content));
+				editor.setValue(
+					mergeIntoExistingNote(existingContent, content),
+				);
 			},
 			initialQuery,
 		).open();
 	}
 
 	private insertFilmArtistLink(editor: Editor): void {
-		const tmdbApiKey = this.app.secretStorage.getSecret(this.settings.tmdbApiKey);
+		const tmdbApiKey = this.app.secretStorage.getSecret(
+			this.settings.tmdbApiKey,
+		);
 
 		if (!tmdbApiKey) {
-			// eslint-disable-next-line obsidianmd/ui/sentence-case
-			new Notice('Please set your TMDb API key in plugin settings.');
+			new Notice('Please set your API key in plugin settings.');
 			return;
 		}
 

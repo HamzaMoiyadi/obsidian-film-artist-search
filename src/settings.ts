@@ -31,11 +31,9 @@ export class FilmArtistSearchSettingTab extends PluginSettingTab {
 		this.containerEl.empty();
 
 		new Setting(this.containerEl)
-			// eslint-disable-next-line obsidianmd/ui/sentence-case
-			.setName('TMDb API key')
+			.setName('API key')
 			.setDesc(
-				// eslint-disable-next-line obsidianmd/ui/sentence-case
-				'Select the secret that holds your TMDb v3 API key. Add it via Settings → Secret storage.',
+				'Select the secret that holds your tmdb v3 API key. Add it via settings → secret storage.',
 			)
 			.addComponent((el) =>
 				new SecretComponent(this.app, el)
@@ -84,8 +82,7 @@ export class FilmArtistSearchSettingTab extends PluginSettingTab {
 		new Setting(this.containerEl)
 			.setName('Download profile images')
 			.setDesc(
-				// eslint-disable-next-line obsidianmd/ui/sentence-case
-				'When on, saves the TMDb profile photo to your vault at note-creation time.',
+				'When on, saves the tmdb profile photo to your vault at note-creation time.',
 			)
 			.addToggle((toggle) => {
 				toggle
@@ -99,16 +96,15 @@ export class FilmArtistSearchSettingTab extends PluginSettingTab {
 		new Setting(this.containerEl)
 			.setName('Image folder')
 			.setDesc(
-				// eslint-disable-next-line obsidianmd/ui/sentence-case
-				'Vault folder where profile images are saved. Leave blank to use the folder configured in Obsidian settings (Files & Links → Default location for new attachments).',
+				'Vault folder where profile images are saved. Leave blank to use the folder configured in Obsidian settings (files & links → default location for new attachments).',
 			)
 			.addSearch((cb) => {
 				new FolderSuggest(this.app, cb.inputEl, (value) => {
 					this.plugin.settings.imageFolder = value;
 					void this.plugin.saveSettings();
 				});
-				// eslint-disable-next-line obsidianmd/ui/sentence-case
-				cb.setPlaceholder('Example: People/Images')
+
+				cb.setPlaceholder('Example: people/images')
 					.setValue(this.plugin.settings.imageFolder)
 					.onChange((value) => {
 						this.plugin.settings.imageFolder = value;
