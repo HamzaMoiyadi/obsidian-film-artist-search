@@ -1,7 +1,7 @@
 {
 	"id": "film-artist-search",
 	"name": "Film Artist Search",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "1.11.4",
 	"description": "Search TMDb for actors, directors, producers, writers, etc. and create structured vault notes or insert wikilinks.",
 	"author": "Hamza Moiyadi",
