@@ -9,14 +9,19 @@ born: "{{birthday}}"
 died: "{{deathday}}"
 birthplace: "{{placeOfBirth}}"
 tmdb: "{{tmdbUrl}}"
-image: "{{profileImageUrl}}"
+image: "{{localProfileImagePath}}"
 ---
 
+![[{{localProfileImagePath}}]]
 ![{{name}}]({{profileImageUrl}})
 
 {{biography}}`;
 
-export function renderTemplate(template: string, person: PersonDetails): string {
+export function renderTemplate(
+  template: string,
+  person: PersonDetails,
+  localProfileImagePath = '',
+): string {
   const profileImageUrl = person.profile_path
     ? `${IMAGE_BASE}${person.profile_path}`
     : '';
@@ -35,6 +40,7 @@ export function renderTemplate(template: string, person: PersonDetails): string 
     biography: person.biography ?? '',
     industry: '',
     date,
+    localProfileImagePath,
   };
 
   return template.replace(/\{\{(\w+)\}\}/g, (_, key: string) => vars[key] ?? '');

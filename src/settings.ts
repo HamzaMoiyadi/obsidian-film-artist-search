@@ -7,12 +7,16 @@ export interface FilmArtistSearchSettings {
 	tmdbApiKey: string;
 	notesFolder: string;
 	templateFile: string;
+	downloadProfileImages: boolean;
+	imageFolder: string;
 }
 
 export const DEFAULT_SETTINGS: FilmArtistSearchSettings = {
 	tmdbApiKey: '',
 	notesFolder: 'People/',
 	templateFile: '',
+	downloadProfileImages: false,
+	imageFolder: '',
 };
 
 export class FilmArtistSearchSettingTab extends PluginSettingTab {
@@ -74,6 +78,36 @@ export class FilmArtistSearchSettingTab extends PluginSettingTab {
 					.onChange(async (value) => {
 						this.plugin.settings.templateFile = value;
 						await this.plugin.saveSettings();
+					});
+			});
+
+		new Setting(this.containerEl)
+			.setName('Download profile images')
+			.setDesc('When on, saves the TMDb profile photo to your vault at note-creation time.')
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.downloadProfileImages)
+					.onChange(async (value) => {
+						this.plugin.settings.downloadProfileImages = value;
+						await this.plugin.saveSettings();
+					});
+			});
+
+		new Setting(this.containerEl)
+			.setName('Image folder')
+			.setDesc(
+				'Vault folder where profile images are saved. Leave blank to use the folder configured in Obsidian settings (Files & Links → Default location for new attachments).',
+			)
+			.addSearch((cb) => {
+				new FolderSuggest(this.app, cb.inputEl, (value) => {
+					this.plugin.settings.imageFolder = value;
+					void this.plugin.saveSettings();
+				});
+				cb.setPlaceholder('Example: People/Images')
+					.setValue(this.plugin.settings.imageFolder)
+					.onChange((value) => {
+						this.plugin.settings.imageFolder = value;
+						void this.plugin.saveSettings();
 					});
 			});
 	}
