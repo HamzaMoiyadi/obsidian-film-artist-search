@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-actor-search",
-	"version": "1.0.0",
-	"description": "Search TMDb for actors and create structured vault notes or insert wikilinks.",
+	"name": "obsidian-film-artist-search",
+	"version": "0.0.1",
+	"description": "Search TMDb for actors, directors, producers, etc. and create structured vault notes or insert wikilinks.",
 	"main": "main.js",
 	"type": "module",
 	"scripts": {
@@ -11,7 +11,7 @@
 		"lint": "eslint ."
 	},
 	"keywords": [],
-	"license": "0-BSD",
+	"license": "MIT",
 	"devDependencies": {
 		"@eslint/js": "^9.39.4",
 		"@types/node": "^22.15.17",

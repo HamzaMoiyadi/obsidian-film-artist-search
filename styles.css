@@ -1,4 +1,4 @@
-.actor-thumb-wrap {
+.film-artist-thumb-wrap {
   position: relative;
   width: 80px;
   height: 108px;
@@ -8,7 +8,7 @@
   background-color: var(--background-modifier-border);
 }
 
-.actor-thumb-placeholder {
+.film-artist-thumb-placeholder {
   position: absolute;
   inset: 0;
   display: flex;
@@ -18,7 +18,7 @@
   pointer-events: none;
 }
 
-.actor-thumb-img {
+.film-artist-thumb-img {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -28,11 +28,11 @@
   transition: opacity 0.15s ease;
 }
 
-.actor-thumb-img.loaded {
+.film-artist-thumb-img.loaded {
   opacity: 1;
 }
 
-.actor-search-suggestion {
+.film-artist-search-suggestion {
   display: flex;
   align-items: center;
   gap: 10px;
